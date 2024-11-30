@@ -66,8 +66,11 @@ Write-Host "All applications installed and configured successfully!" -Foreground
 
 
 # TODOS
+# Fix qBittorrent configuration file creation
 # Make chrome default browser
 # Setup google drive sync for keepass database file
 # Setup keepass sync with google drive
 # Make VLC default media player
 # Make VSCode default text editor
+# Show hidden files and folders
+# Show file extensions
