@@ -63,6 +63,60 @@ Session\TorrentExportDirectory=$downloadDir
 function Install-Configure-KeePass {
     Write-Host "Installing KeePass..." -ForegroundColor Yellow
     choco install keepass -y --no-progress
+
+    Write-Host "Adding enforced configuration file for KeePass with database file sync trigger..." -ForegroundColor Cyan
+    $keepassConfigPath = "$env:ProgramFiles\KeePass Password Safe 2\KeePass.config.enforced.xml"
+    $configContent = @"
+<?xml version=`"1.0`" encoding=`"utf-8`"?>
+<Configuration xmlns:xsd=`"http://www.w3.org/2001/XMLSchema`" xmlns:xsi=`"http://www.w3.org/2001/XMLSchema-instance`">
+    <Application>
+        <TriggerSystem>
+            <Triggers>
+                <Trigger>
+                    <Guid>8H/489TIqEGfVW0MMFuSSQ==</Guid>
+                    <Name>Sync2Drive</Name>
+                    <Events>
+                        <Event>
+                            <TypeGuid>lcGm/XJ8QMei+VsPoJljHA==</TypeGuid>
+                            <Parameters>
+                                <Parameter>0</Parameter>
+                                <Parameter />
+                            </Parameters>
+                        </Event>
+                    </Events>
+                    <Conditions />
+                    <Actions>
+                        <Action>
+                            <TypeGuid>tkamn96US7mbrjykfswQ6g==</TypeGuid>
+                            <Parameters>
+                                <Parameter />
+                                <Parameter>0</Parameter>
+                            </Parameters>
+                        </Action>
+                        <Action>
+                            <TypeGuid>Iq135Bd4Tu2ZtFcdArOtTQ==</TypeGuid>
+                            <Parameters>
+                                <Parameter>g:\My Drive\KeePass\KeePass.kdbx</Parameter>
+                                <Parameter />
+                                <Parameter />
+                            </Parameters>
+                        </Action>
+                        <Action>
+                            <TypeGuid>tkamn96US7mbrjykfswQ6g==</TypeGuid>
+                            <Parameters>
+                                <Parameter />
+                                <Parameter>1</Parameter>
+                            </Parameters>
+                        </Action>
+                    </Actions>
+                </Trigger>
+            </Triggers>
+        </TriggerSystem>
+    </Application>
+</Configuration>
+"@
+    $configContent | Out-File -FilePath $keepassConfigPath -Encoding UTF8
+    Write-Host "KeePass enforced configuration file added." -ForegroundColor Green
 }
 
 # Function to install and configure Google Drive
