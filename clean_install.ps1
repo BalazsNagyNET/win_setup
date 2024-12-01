@@ -4,77 +4,128 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
     exit
 }
 
-# Install Chocolatey if not already installed
-if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-    Write-Host "Chocolatey not found. Installing Chocolatey..." -ForegroundColor Cyan
-    Set-ExecutionPolicy Bypass -Scope Process -Force;
-    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
-    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-} else {
-    Write-Host "Chocolatey is already installed." -ForegroundColor Green
+# Function to install Chocolatey
+function Install-Chocolatey {
+    if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
+        Write-Host "Chocolatey not found. Installing Chocolatey..." -ForegroundColor Cyan
+        Set-ExecutionPolicy Bypass -Scope Process -Force;
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
+        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    } else {
+        Write-Host "Chocolatey is already installed." -ForegroundColor Green
+    }
+
+    # Refresh the environment to ensure `choco` is available
+    $env:Path += ";$((Get-Command choco).Path)"
 }
 
-# Refresh the environment to ensure `choco` is available
-$env:Path += ";$((Get-Command choco).Path)"
+# Function to install and configure Google Chrome
+function Install-Configure-Chrome {
+    Write-Host "Installing Google Chrome..." -ForegroundColor Yellow
+    choco install googlechrome -y --no-progress
 
-# Install required applications using Chocolatey
-Write-Host "Installing applications using Chocolatey..." -ForegroundColor Cyan
-
-$apps = @(
-    @{Name = "Google Chrome"; Id = "googlechrome"},
-    @{Name = "qBittorrent"; Id = "qbittorrent"},
-    @{Name = "KeePass"; Id = "keepass"},
-    @{Name = "Google Drive"; Id = "google-drive"},
-    @{Name = "VLC Media Player"; Id = "vlc"},
-    @{Name = "Visual Studio Code"; Id = "vscode"},
-    @{Name = "Total Commander"; Id = "totalcommander"}
-)
-
-foreach ($app in $apps) {
-    Write-Host "Installing $($app.Name)..." -ForegroundColor Yellow
-    choco install $($app.Id) -y --no-progress
+    Write-Host "Setting Google Chrome as the default browser..." -ForegroundColor Cyan
+    $regPath = "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice"
+    $chromeProgId = "ChromeHTML"
+    Set-ItemProperty -Path $regPath -Name "ProgId" -Value $chromeProgId
+    Set-ItemProperty -Path $regPath.Replace("http", "https") -Name "ProgId" -Value $chromeProgId
+    Write-Host "Google Chrome has been set as the default browser." -ForegroundColor Green
 }
 
-# Open and close qBittorrent to create the configuration file
-Write-Host "Opening and closing qBittorrent to create the configuration file..." -ForegroundColor Cyan
-Start-Process -FilePath "$env:ProgramFiles\qBittorrent\qbittorrent.exe" -ArgumentList "--confirm-legal-notice" -NoNewWindow
-Write-Host "Waiting for 10 seconds to allow the configuration file to be created..." -ForegroundColor Yellow
-Start-Sleep -Seconds 10  # Wait for 5 seconds to allow the configuration file to be created
-Stop-Process -Name "qbittorrent" -Force
+# Function to install and configure qBittorrent
+function Install-Configure-qBittorrent {
+    Write-Host "Installing qBittorrent..." -ForegroundColor Yellow
+    choco install qbittorrent -y --no-progress
 
-# Configure qBittorrent to set the default download directory
-Write-Host "Configuring qBittorrent download directory..." -ForegroundColor Cyan
-$qBittorrentConfigPath = "$env:APPDATA\qBittorrent\qBittorrent.ini"
-$downloadDir = "C:\\Torrents"
+    Write-Host "Opening and closing qBittorrent to create the configuration file..." -ForegroundColor Cyan
+    Start-Process -FilePath "$env:ProgramFiles\qBittorrent\qbittorrent.exe" -ArgumentList "--confirm-legal-notice" -NoNewWindow
+    Write-Host "Waiting for 10 seconds to allow the configuration file to be created..." -ForegroundColor Yellow
+    Start-Sleep -Seconds 10
+    Stop-Process -Name "qbittorrent" -Force
 
-if (-not (Test-Path $downloadDir)) {
-    New-Item -Path $downloadDir -ItemType Directory | Out-Null
-}
+    Write-Host "Configuring qBittorrent download directory..." -ForegroundColor Cyan
+    $qBittorrentConfigPath = "$env:APPDATA\qBittorrent\qBittorrent.ini"
+    $downloadDir = "C:\\Torrents"
 
-$newSettings = @"
+    if (-not (Test-Path $downloadDir)) {
+        New-Item -Path $downloadDir -ItemType Directory | Out-Null
+    }
+
+    $newSettings = @"
 Session\DefaultSavePath=$downloadDir
 Session\TorrentExportDirectory=$downloadDir
 "@
-$configContent = Get-Content $qBittorrentConfigPath
+    $configContent = Get-Content $qBittorrentConfigPath
 
-# Check if the [BitTorrent] section exists
-if ($configContent -match "^\[BitTorrent\]") {
-    # Append new settings to the [BitTorrent] section
-    $configContent = $configContent -replace "(\[BitTorrent\].*?)(?=\[|\z)", "`$1`n$newSettings"
-} else {
-    # If the [BitTorrent] section does not exist, add it
-    $configContent += "`n[BitTorrent]`n$newSettings"
+    if ($configContent -match "^\[BitTorrent\]") {
+        $configContent = $configContent -replace "(\[BitTorrent\].*?)(?=\[|\z)", "`$1`n$newSettings"
+    } else {
+        $configContent += "`n[BitTorrent]`n$newSettings"
+    }
+
+    $configContent | Set-Content $qBittorrentConfigPath
 }
 
-# Write the updated configuration back to the file
-$configContent | Set-Content $qBittorrentConfigPath
+# Function to install and configure KeePass
+function Install-Configure-KeePass {
+    Write-Host "Installing KeePass..." -ForegroundColor Yellow
+    choco install keepass -y --no-progress
+}
 
-# Set Google Chrome as the default browser
-Write-Host "Setting Google Chrome as the default browser..." -ForegroundColor Cyan
-Start-Process -FilePath "$env:ProgramFiles\Google\Chrome\Application\chrome.exe" -ArgumentList "--make-default-browser" -NoNewWindow -Wait
+# Function to install and configure Google Drive
+function Install-Configure-GoogleDrive {
+    Write-Host "Installing Google Drive..." -ForegroundColor Yellow
+    choco install google-drive -y --no-progress
+}
+
+# Function to install and configure VLC Media Player
+function Install-Configure-VLC {
+    Write-Host "Installing VLC Media Player..." -ForegroundColor Yellow
+    choco install vlc -y --no-progress
+}
+
+# Function to install and configure Visual Studio Code
+function Install-Configure-VSCode {
+    Write-Host "Installing Visual Studio Code..." -ForegroundColor Yellow
+    choco install vscode -y --no-progress
+}
+
+# Function to install and configure Total Commander
+function Install-Configure-TotalCommander {
+    Write-Host "Installing Total Commander..." -ForegroundColor Yellow
+    choco install totalcommander -y --no-progress
+}
+
+# Function to show hidden files and folders
+function Show-HiddenFilesAndFolders {
+    Write-Host "Showing hidden files and folders..." -ForegroundColor Cyan
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Value 1
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSuperHidden" -Value 1
+    Write-Host "Hidden files and folders are now visible." -ForegroundColor Green
+}
+
+# Function to show file extensions
+function Show-FileExtensions {
+    Write-Host "Showing file extensions..." -ForegroundColor Cyan
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value 0
+    Write-Host "File extensions are now visible." -ForegroundColor Green
+}
+
+# Main script execution
+Install-Chocolatey
+
+Install-Configure-Chrome
+Install-Configure-qBittorrent
+Install-Configure-KeePass
+Install-Configure-GoogleDrive
+Install-Configure-VLC
+Install-Configure-VSCode
+Install-Configure-TotalCommander
+
+Show-HiddenFilesAndFolders
+Show-FileExtensions
 
 Write-Host "All applications installed and configured successfully!" -ForegroundColor Green
-
 
 # TODOS
 # Make chrome default browser
@@ -82,5 +133,3 @@ Write-Host "All applications installed and configured successfully!" -Foreground
 # Setup keepass sync with google drive
 # Make VLC default media player
 # Make VSCode default text editor
-# Show hidden files and folders
-# Show file extensions
