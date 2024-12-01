@@ -23,13 +23,6 @@ function Install-Chocolatey {
 function Install-Configure-Chrome {
     Write-Host "Installing Google Chrome..." -ForegroundColor Yellow
     choco install googlechrome -y --no-progress
-
-    Write-Host "Setting Google Chrome as the default browser..." -ForegroundColor Cyan
-    $regPath = "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice"
-    $chromeProgId = "ChromeHTML"
-    Set-ItemProperty -Path $regPath -Name "ProgId" -Value $chromeProgId
-    Set-ItemProperty -Path $regPath.Replace("http", "https") -Name "ProgId" -Value $chromeProgId
-    Write-Host "Google Chrome has been set as the default browser." -ForegroundColor Green
 }
 
 # Function to install and configure qBittorrent
@@ -128,8 +121,8 @@ Show-FileExtensions
 Write-Host "All applications installed and configured successfully!" -ForegroundColor Green
 
 # TODOS
-# Make chrome default browser
-# Setup google drive sync for keepass database file
-# Setup keepass sync with google drive
+# Make chrome default browser - not easy
 # Make VLC default media player
 # Make VSCode default text editor
+# Setup google drive sync for keepass database file
+# Setup keepass sync with google drive
