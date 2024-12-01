@@ -38,25 +38,36 @@ foreach ($app in $apps) {
 # Open and close qBittorrent to create the configuration file
 Write-Host "Opening and closing qBittorrent to create the configuration file..." -ForegroundColor Cyan
 Start-Process -FilePath "$env:ProgramFiles\qBittorrent\qbittorrent.exe" -ArgumentList "--confirm-legal-notice" -NoNewWindow
-Start-Sleep -Seconds 5  # Wait for 5 seconds to allow the configuration file to be created
+Write-Host "Waiting for 10 seconds to allow the configuration file to be created..." -ForegroundColor Yellow
+Start-Sleep -Seconds 10  # Wait for 5 seconds to allow the configuration file to be created
 Stop-Process -Name "qbittorrent" -Force
 
 # Configure qBittorrent to set the default download directory
 Write-Host "Configuring qBittorrent download directory..." -ForegroundColor Cyan
 $qBittorrentConfigPath = "$env:APPDATA\qBittorrent\qBittorrent.ini"
-$downloadDir = "C:\Torrents"
+$downloadDir = "C:\\Torrents"
 
 if (-not (Test-Path $downloadDir)) {
     New-Item -Path $downloadDir -ItemType Directory | Out-Null
 }
 
-if (Test-Path $qBittorrentConfigPath) {
-    (Get-Content $qBittorrentConfigPath) -replace "^\[BitTorrent\].*DownloadFolder=.*$", "`[BitTorrent]`nDownloadFolder=$downloadDir" |
-        Set-Content $qBittorrentConfigPath
-    Write-Host "Download directory set to $downloadDir" -ForegroundColor Green
+$newSettings = @"
+Session\DefaultSavePath=$downloadDir
+Session\TorrentExportDirectory=$downloadDir
+"@
+$configContent = Get-Content $qBittorrentConfigPath
+
+# Check if the [BitTorrent] section exists
+if ($configContent -match "^\[BitTorrent\]") {
+    # Append new settings to the [BitTorrent] section
+    $configContent = $configContent -replace "(\[BitTorrent\].*?)(?=\[|\z)", "`$1`n$newSettings"
 } else {
-    Write-Host "Failed to create qBittorrent configuration file. Please check manually." -ForegroundColor Red
+    # If the [BitTorrent] section does not exist, add it
+    $configContent += "`n[BitTorrent]`n$newSettings"
 }
+
+# Write the updated configuration back to the file
+$configContent | Set-Content $qBittorrentConfigPath
 
 # Set Google Chrome as the default browser
 Write-Host "Setting Google Chrome as the default browser..." -ForegroundColor Cyan
@@ -66,7 +77,6 @@ Write-Host "All applications installed and configured successfully!" -Foreground
 
 
 # TODOS
-# Fix qBittorrent configuration file creation
 # Make chrome default browser
 # Setup google drive sync for keepass database file
 # Setup keepass sync with google drive
