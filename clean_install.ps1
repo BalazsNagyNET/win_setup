@@ -93,7 +93,6 @@ function Install-Configure-TotalCommander {
 function Show-HiddenFilesAndFolders {
     Write-Host "Showing hidden files and folders..." -ForegroundColor Cyan
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Value 1
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSuperHidden" -Value 1
     Write-Host "Hidden files and folders are now visible." -ForegroundColor Green
 }
 
