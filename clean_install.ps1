@@ -143,6 +143,18 @@ function Install-Configure-TotalCommander {
     choco install totalcommander -y --no-progress
 }
 
+# Function to install and configure Git
+function Install-Configure-Git {
+    Write-Host "Installing Git..." -ForegroundColor Yellow
+    choco install git -y --no-progress
+}
+
+# Function to install and configure GitExtensions
+function Install-Configure-GitExtensions {
+    Write-Host "Installing GitExtensions..." -ForegroundColor Yellow
+    choco install gitextensions -y --no-progress
+}
+
 # Function to show hidden files and folders
 function Show-HiddenFilesAndFolders {
     Write-Host "Showing hidden files and folders..." -ForegroundColor Cyan
@@ -167,6 +179,8 @@ Install-Configure-GoogleDrive
 Install-Configure-VLC
 Install-Configure-VSCode
 Install-Configure-TotalCommander
+Install-Configure-Git
+Install-Configure-GitExtensions
 
 Show-HiddenFilesAndFolders
 Show-FileExtensions
