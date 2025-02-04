@@ -12,3 +12,4 @@ Setup software on fresh windows
 - Total Commander
 - Git
 - GitExtensions
+- AutoHotkey

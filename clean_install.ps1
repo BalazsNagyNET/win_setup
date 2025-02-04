@@ -155,6 +155,12 @@ function Install-Configure-GitExtensions {
     choco install gitextensions -y --no-progress
 }
 
+# Function to install and configure AutoHotkey
+function Install-Configure-AutoHotkey {
+    Write-Host "Installing AutoHotkey..." -ForegroundColor Yellow
+    choco install autohotkey -y --no-progress
+}
+
 # Function to show hidden files and folders
 function Show-HiddenFilesAndFolders {
     Write-Host "Showing hidden files and folders..." -ForegroundColor Cyan
@@ -181,6 +187,7 @@ Install-Configure-VSCode
 Install-Configure-TotalCommander
 Install-Configure-Git
 Install-Configure-GitExtensions
+Install-Configure-AutoHotkey
 
 Show-HiddenFilesAndFolders
 Show-FileExtensions
