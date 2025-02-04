@@ -175,6 +175,28 @@ function Show-FileExtensions {
     Write-Host "File extensions are now visible." -ForegroundColor Green
 }
 
+# Function to set Visual Studio Code as the default editor for Total Commander
+function Set-VSCodeAsDefaultEditor {
+    Write-Host "Setting Visual Studio Code as the default editor for Total Commander..." -ForegroundColor Cyan
+    $wincmdIniPath = "$env:APPDATA\GHISLER\wincmd.ini"
+    if (-not (Test-Path $wincmdIniPath)) {
+        Write-Host "Total Commander configuration file not found. Skipping setting default editor." -ForegroundColor Red
+        return
+    }
+
+    $configContent = Get-Content $wincmdIniPath
+    $editorSetting = "Editor=%ProgramFiles%\Microsoft VS Code\Code.exe"
+
+    if ($configContent -match "^\[Configuration\]") {
+        $configContent = $configContent -replace "(\[Configuration\].*?)(?=\[|\z)", "`$1`n$editorSetting"
+    } else {
+        $configContent += "`n[Configuration]`n$editorSetting"
+    }
+
+    $configContent | Set-Content $wincmdIniPath
+    Write-Host "Visual Studio Code set as the default editor for Total Commander." -ForegroundColor Green
+}
+
 # Main script execution
 Install-Chocolatey
 
@@ -191,6 +213,7 @@ Install-Configure-AutoHotkey
 
 Show-HiddenFilesAndFolders
 Show-FileExtensions
+Set-VSCodeAsDefaultEditor
 
 Write-Host "All applications installed and configured successfully!" -ForegroundColor Green
 
