@@ -143,6 +143,24 @@ function Install-Configure-TotalCommander {
     choco install totalcommander -y --no-progress
 }
 
+# Function to copy Total Commander key
+function Copy-TotalCommanderKey {
+    Write-Host "Copying Total Commander key..." -ForegroundColor Yellow
+    $sourcePath = "g:\My Drive\TotalCommanderKey\wincmd.key"
+    $destinationPath = "c:\Program Files\totalcmd\wincmd.key"
+
+    Write-Host "Starting Google Drive. Please log in to your account." -ForegroundColor Cyan
+    Start-Process -FilePath "c:\Program Files\Google\Drive File Stream\launch.bat"
+    Read-Host "Press Enter to continue..."
+
+    if (Test-Path $sourcePath) {
+        Copy-Item -Path $sourcePath -Destination $destinationPath -Force
+        Write-Host "Total Commander key copied successfully." -ForegroundColor Green
+    } else {
+        Write-Host "Total Commander key not found at source path." -ForegroundColor Red
+    }
+}
+
 # Function to install and configure Git
 function Install-Configure-Git {
     Write-Host "Installing Git..." -ForegroundColor Yellow
@@ -191,6 +209,8 @@ Install-Configure-AutoHotkey
 
 Show-HiddenFilesAndFolders
 Show-FileExtensions
+
+Copy-TotalCommanderKey
 
 Write-Host "All applications installed and configured successfully!" -ForegroundColor Green
 
