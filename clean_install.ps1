@@ -150,7 +150,7 @@ function Copy-TotalCommanderKey {
     $destinationPath = "c:\Program Files\totalcmd\wincmd.key"
 
     Write-Host "Starting Google Drive. Please log in to your account." -ForegroundColor Cyan
-    Start-Process -FilePath "C:\Program Files\Google\Drive\launch.bat"
+    Start-Process -FilePath "c:\Program Files\Google\Drive File Stream\\launch.bat"
     Read-Host "Press Enter to continue..."
 
     if (Test-Path $sourcePath) {
