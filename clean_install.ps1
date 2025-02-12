@@ -203,14 +203,14 @@ Install-Configure-GoogleDrive
 Install-Configure-VLC
 Install-Configure-VSCode
 Install-Configure-TotalCommander
-Copy-TotalCommanderKey
-
 Install-Configure-Git
 Install-Configure-GitExtensions
 Install-Configure-AutoHotkey
 
 Show-HiddenFilesAndFolders
 Show-FileExtensions
+
+Copy-TotalCommanderKey
 
 Write-Host "All applications installed and configured successfully!" -ForegroundColor Green
 
