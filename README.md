@@ -13,3 +13,4 @@ Setup software on fresh windows
 - Git
 - GitExtensions
 - AutoHotkey
+- Sumatra PDF
