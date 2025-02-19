@@ -185,6 +185,16 @@ function Install-Configure-SumatraPDF {
     choco install sumatrapdf -y --no-progress
 }
 
+# Function to install and configure Python
+function Install-Configure-Python {
+    Write-Host "Installing Python..." -ForegroundColor Yellow
+    choco install python -y --no-progress
+
+    Write-Host "Configuring Python environment..." -ForegroundColor Cyan
+    $env:Path += ";$env:ProgramFiles\Python39\Scripts;$env:ProgramFiles\Python39"
+    [Environment]::SetEnvironmentVariable("Path", $env:Path, [EnvironmentVariableTarget]::Machine)
+}
+
 # Function to show hidden files and folders
 function Show-HiddenFilesAndFolders {
     Write-Host "Showing hidden files and folders..." -ForegroundColor Cyan
@@ -213,6 +223,7 @@ Install-Configure-Git
 Install-Configure-GitExtensions
 Install-Configure-AutoHotkey
 Install-Configure-SumatraPDF
+Install-Configure-Python
 
 Show-HiddenFilesAndFolders
 Show-FileExtensions
