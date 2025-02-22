@@ -15,3 +15,4 @@ Setup software on fresh windows
 - AutoHotkey
 - Sumatra PDF
 - Python
+- Fusion 360

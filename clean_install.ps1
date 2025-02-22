@@ -195,6 +195,12 @@ function Install-Configure-Python {
     [Environment]::SetEnvironmentVariable("Path", $env:Path, [EnvironmentVariableTarget]::Machine)
 }
 
+# Function to install and configure Fusion 360
+function Install-Configure-Fusion360 {
+    Write-Host "Installing Fusion 360..." -ForegroundColor Yellow
+    choco install autodesk-fusion360 -y --no-progress
+}
+
 # Function to show hidden files and folders
 function Show-HiddenFilesAndFolders {
     Write-Host "Showing hidden files and folders..." -ForegroundColor Cyan
@@ -224,6 +230,7 @@ Install-Configure-GitExtensions
 Install-Configure-AutoHotkey
 Install-Configure-SumatraPDF
 Install-Configure-Python
+Install-Configure-Fusion360
 
 Show-HiddenFilesAndFolders
 Show-FileExtensions
