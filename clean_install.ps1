@@ -215,6 +215,11 @@ function Show-FileExtensions {
     Write-Host "File extensions are now visible." -ForegroundColor Green
 }
 
+function Add-Sygic-Vpn {
+    Add-VpnConnection -Name "Sygic VPN" -ServerAddress "vpn.sygic.com" -TunnelType "SSTP" -EncryptionLevel "Required" -AuthenticationMethod MSCHAPv2 -RememberCredential -SplitTunneling
+    Add-VpnConnection -Name "Sygic VPN default gw" -ServerAddress "vpn.sygic.com" -TunnelType "SSTP" -EncryptionLevel "Required" -AuthenticationMethod MSCHAPv2 -RememberCredential
+}
+
 # Main script execution
 Install-Chocolatey
 
@@ -236,6 +241,8 @@ Show-HiddenFilesAndFolders
 Show-FileExtensions
 
 Copy-TotalCommanderKey
+
+Add-Sygic-Vpn
 
 Write-Host "All applications installed and configured successfully!" -ForegroundColor Green
 
