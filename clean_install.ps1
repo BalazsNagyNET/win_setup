@@ -113,6 +113,9 @@ function Install-Configure-KeePass {
             </Triggers>
         </TriggerSystem>
     </Application>
+    <MainWindow>
+		<CloseButtonMinimizesWindow>true</CloseButtonMinimizesWindow>
+    </MainWindow>
 </Configuration>
 "@
     $configContent | Out-File -FilePath $keepassConfigPath -Encoding UTF8
