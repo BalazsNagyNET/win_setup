@@ -122,7 +122,7 @@ function Install-Configure-KeePass {
 # Function to install and configure Google Drive
 function Install-Configure-GoogleDrive {
     Write-Host "Installing Google Drive..." -ForegroundColor Yellow
-    choco install google-drive -y --no-progress
+    choco install googledrive -y --no-progress
 }
 
 # Function to install and configure VLC Media Player
@@ -146,8 +146,8 @@ function Install-Configure-TotalCommander {
 # Function to copy Total Commander key
 function Copy-TotalCommanderKey {
     Write-Host "Copying Total Commander key..." -ForegroundColor Yellow
-    $sourcePath = "g:\My Drive\TotalCommanderKey\wincmd.key"
-    $destinationPath = "c:\Program Files\totalcmd\wincmd.key"
+    $sourcePath = "g:\My Drive\TotalCommanderKey\WINCMD.KEY"
+    $destinationPath = "c:\Program Files\totalcmd\WINCMD.KEY"
 
     Write-Host "Starting Google Drive. Please log in to your account." -ForegroundColor Cyan
     Start-Process -FilePath "c:\Program Files\Google\Drive File Stream\launch.bat"
