@@ -115,6 +115,7 @@ function Install-Configure-KeePass {
     </Application>
     <MainWindow>
 		<CloseButtonMinimizesWindow>true</CloseButtonMinimizesWindow>
+		<MinimizeToTray>true</MinimizeToTray>
     </MainWindow>
 </Configuration>
 "@
